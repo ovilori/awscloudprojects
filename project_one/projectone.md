@@ -154,9 +154,9 @@ Lastly, reload Apache for the changes to take effect:
 
 Create an index.html file in the web root /var/www/lampproject to test that the virtual host works as expected:
 
-**```
+```
 sudo echo 'Hello LAMP from hostname' $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) 'with public IP' $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) > /var/www/lampproject/index.html
-```**
+```
 
 From your browser, open your website URL using IP address:
 
