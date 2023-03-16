@@ -73,3 +73,27 @@ After the script has finished executing, check if you can log in to the MySQL co
 
 ## .............................. Step 3: Installing PHP ..............................
 
+Purpose: to process code and generate dynamic content for the web server.
+
+Apache embeds the PHP interpreter in each request. Nginx requires an external program to handle PHP processing and act as a bridge between the PHP interpreter itself and the web server. This allows for a better overall performance in most PHP-based websites, but it requires additional configuration. 
+
+We need to install php-fpm (“PHP fastCGI process manager”), and tell Nginx to pass PHP requests to it for processing. Additionally, we need php-mysql, a PHP module that allows PHP to communicate with MySQL-based databases. Core PHP packages will automatically be installed as dependencies.
+
+To install  the three packages at once, run: 
+
+**`sudo apt install php-fpm php-mysql`**
+
+After the installation, verify the PHP version with the command below:
+
+**`php -v`**
+
+![PHP version](./images/php_version.png)
+
+Set up of the LAMP stack is complete with:
+
+- [x] Linux
+- [x] Engine X (Nginx)
+- [x] MySQL
+- [x] PHP
+
+## .............................. Step 4: Configuring Nginx to use PHP processor ..............................
