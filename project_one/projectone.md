@@ -96,7 +96,7 @@ Set up of the LAMP stack is complete with:
 - [x] MySQL
 - [x] PHP
 
-## .............................. Step 4: Creating a Virtual Host for our Website Using Apache ..............................
+## .............................. Step 4: Creating Virtual Host for our Website Using Apache ..............................
 
 Purpose: to test the LAMP setup with a PHP script using a Apache Virtual Host to hold our website’s files and folders. The Virtual host allows us to have multiple websites located on a single machine. In this steep, we will set up a domain called lampproject.
 
