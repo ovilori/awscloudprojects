@@ -44,3 +44,31 @@ Next, we check that the server can be accessed from the internet. On any browser
 ![Browser access](./images/browser.png)
 
 ## .............................. Step 2: Installing MySQL ..............................
+
+Installl MySQL on the Ubuntun instance:
+
+ **`sudo apt install mysql-server -y`**
+
+After the installation is completed, log in to the MySQL console:
+
+**`sudo mysql`**
+
+![MySQL Console](./images/mysql_console.png)
+
+Set a password for the root user, using mysql_native_password as default authentication method. 
+
+**`ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '<YOUR_PASSWORD_HERE>';`**
+
+Exit the MySQL shell with **`EXIT`**
+
+It is recommended to run  interactive security script that comes pre-installed with MySQL to remove some insecure default setting and lock down access to your database system.
+
+Start the script using **`sudo mysql_secure_installation`**
+
+![Interactive shell](./images/interactive_shell.png)
+
+After the script has finished executing, check if you can log in to the MySQL console by typing **`sudo mysql -p`**
+
+## .............................. Step 3: Installing PHP ..............................
+
+
