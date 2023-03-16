@@ -206,5 +206,5 @@ The file contains sensitive information about your PHP environment -and your Ubu
 
 **`sudo rm /var/www/projectlamp/index.php`**
 
-**This is the end of this project**
+**This is the end of this project.**
 
