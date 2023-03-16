@@ -4,6 +4,8 @@
 
 ## .............................. Step 1: Installing Apache and Updating the Firewall ..............................
 
+Purpose: to serve content users will see.
+
 Sign in as either the root/IAM user (good practice is to create an IAM user and not use the root user to create resources on AWS).
 Launch the Ubuntu EC2 instance (check videos below on how to set up your AWS account and launch your first EC2 instance).
 
@@ -45,6 +47,8 @@ Next, we check that the server can be accessed from the internet. On any browser
 
 ## .............................. Step 2: Installing MySQL ..............................
 
+Purpose: to store, manage and retrieve data.
+
 Installl MySQL on the Ubuntun instance:
 
  **`sudo apt install mysql-server -y`**
@@ -71,4 +75,23 @@ After the script has finished executing, check if you can log in to the MySQL co
 
 ## .............................. Step 3: Installing PHP ..............................
 
+Purpose: process code to display dynamic content to end user.
 
+We need three packages which are the **`php`** package that will process code to display dynamic content to end user, the **`php-mysql`** PHP module that allows PHP to communicate with MySQL-based databases, and finally the **`libapache2-mod-php`** to enable Apache to handle PHP files. The core PHP packages will automatically be installed as dependencies.
+
+Installing the three packages at once using: 
+
+**`sudo apt install php php-mysql libapache2-mod-php`**
+
+After the installation, verify the PHP version with the command below:
+
+**`php -v`**
+
+![PHP version](./images/php_version.png)
+
+Set up of the LAMP stack is complete with:
+
+- [x] Linux
+- [x] Apache Http Server
+- [x] MySQL
+- [x] PHP
