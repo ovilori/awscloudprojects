@@ -7,7 +7,7 @@
 Purpose: to serve content users will see.
 
 Sign in as either the root/IAM user (good practice is to create an IAM user and not use the root user to create resources on AWS).
-Launch the Ubuntu EC2 instance (check videos below on how to set up your AWS account and launch your first EC2 instance).
+Create and launch an Ubuntu EC2 instance (check videos below on how to set up your AWS account and launch your first EC2 instance).
 
 - [AWS account setup and Provisioning an Ubuntu Server] (https://www.youtube.com/watch?v=xxKuB9kJoYM&list=PLtPuNR8I4TvkwU7Zu0l0G_uwtSUXLckvh&index=6)
 - [Connecting to your EC2 Instance] (https://www.youtube.com/watch?v=TxT6PNJts-s&list=PLtPuNR8I4TvkwU7Zu0l0G_uwtSUXLckvh&index=7)
