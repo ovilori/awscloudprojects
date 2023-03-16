@@ -165,3 +165,46 @@ From your browser, open your website URL using IP address:
 ![Homepage test](./images/homepage.png)
 
 ## .............................. Step 5: Enable PHP on the website ..............................
+
+Purpose: to ensure with the default DirectoryIndex settings on Apache, the index.html file does not take precedence over the index.php file.
+
+Edit the /etc/apache2/mods-enabled/dir.conf file and change the order in which the index.php file is listed within the DirectoryIndex directory using:
+
+**`sudo vim /etc/apache2/mods-enabled/dir.conf`**
+
+In the file, change this:
+
+```#DirectoryIndex index.html index.cgi index.pl index.php index.xhtml index.htm```
+to:
+
+```DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm```
+
+![Updated file](./images/new_conf_file.png)
+
+Save and close the file. Reload Apache so the changes can take effect:
+
+**`sudo systemctl reload apache2`**
+
+Next, create a PHP test script to confirm that Apache is able to handle and process requests for PHP files.
+
+Create a new file named index.php inside your custom web root folder:
+
+**`vim /var/www/lampproject/index.php`**
+
+This will open a blank file. Add the following text, which is valid PHP code, inside the file:
+
+```
+<?php
+phpinfo();
+```
+
+Save and close the file. Refresh the page and you should see a page similar to the page below. The page provides information about your server from the perspective of PHP. It is useful for debugging and to ensure that your settings are being applied correctly.
+
+![Apache Homepage](./images/apache_homepage.png)
+
+The file contains sensitive information about your PHP environment -and your Ubuntu server, so it is advisable to remove it since you can always recreate this page if you need to access the information again later.. You can use the rm command to do so:
+
+**`sudo rm /var/www/projectlamp/index.php`**
+
+**This is the end of this project**
+
