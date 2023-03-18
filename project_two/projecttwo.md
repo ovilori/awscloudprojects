@@ -194,3 +194,114 @@ The file contains sensitive information about your PHP environment -and your Ubu
 **`sudo rm /var/www/lempproject/info.php`**
 
 ## .............................. Step 6: Retrieving data from MySQL database with PHP ..............................
+
+Purpose: to retrieve data from MySQL database with PHP
+
+Here, we will create a test database and configure access to it so that our Nginx website will be able to query data from the database and display it.
+
+Create a new user with the mysql_native_password authentication method in order to be able to connect to the MySQL database from PHP.
+
+First, connect to the MySQL Console using the root account:
+
+**`sudo mysql -p`**
+
+We will create a database named as test_database and a user named test_user. Create a new database using the following command from your MySQL console:
+
+**```mysql> CREATE DATABASE `test_database`;```**
+
+Next, we will crate a new user and grant him full privileges on the test_database using mysql_native_password as default authentication method.
+
+**```mysql> CREATE USER 'test_user'@'%' IDENTIFIED WITH mysql_native_password BY '<your_password>';```**
+
+Grant the user permission over the test_database using the following command:
+
+**```mysql> GRANT ALL ON test_database.* TO 'test_user'@'%';```**
+
+With this, we have giving the 'test_user' user full privileges over the test_database, while preventing it from creating or modifying other databases on the server.
+
+Exit the MySQL shell with **`mysql> exit`**
+
+Test if the 'test_user' has the proper permissions by logging in to the MySQL console again using the custom user credentials
+
+**`mysql - u test_user -p`**
+
+After logging in to the MySQL console, confirm that you have access to the test_database database:
+
+**`mysql> SHOW DATABASES;`**
+
+You should see the test_database in the output on the console as shown on the screenshot below.
+
+![Show_database](./images/database.png)
+
+Next, we will create a test 'todo_list' table. Run the following statement from the MySQL console:
+
+```
+CREATE TABLE test_database.todo_list (
+mysql>     item_id INT AUTO_INCREMENT,
+mysql>     content VARCHAR(255),
+mysql>     PRIMARY KEY(item_id)
+mysql> );
+```
+![Create_table](./images/create_table.png)
+
+Insert a few rows of content in the table we just created, repeating the command a few times using different values.
+
+```
+INSERT INTO test_database.todo_list (content) VALUES ("My first assignment");
+INSERT INTO test_database.todo_list (content) VALUES ("My second assignment");
+INSERT INTO test_database.todo_list (content) VALUES ("My third assignment");
+INSERT INTO test_database.todo_list (content) VALUES ("My fourth assignment");
+INSERT INTO test_database.todo_list (content) VALUES ("My fifth assignment");
+```
+Confirm the data was saved successfully to the table using the command below:
+
+**`mysql>  SELECT * FROM example_database.todo_list;`**
+
+![Show_table](./images/show_table.png)
+
+After confirming the data was saved, you can exit the MySQL console:
+
+**`mysql> exit`**
+
+Now, create a PHP script that will connect to the MySQL database and query the content. Create a new PHP file in the custom web root directory using:
+
+**`sudo vi /var/www/lempproject/todo_list.php`**
+
+Copy the content below into the todo_list.php script. The todo_list.php script will connect to the MySQL database and query for the content of the todo_list table and then display the result in a list. If there is a problem with the database connection, it will throw an exception.
+
+```
+<?php
+$user = "test_user";
+$password = "<your_password>";
+$database = "test_database";
+$table = "todo_list";
+
+try {
+  $db = new PDO("mysql:host=localhost;dbname=$database", $user, $password);
+  echo "<h2>My To Do List</h2><ol>";
+  foreach($db->query("SELECT content FROM $table") as $row) {
+    echo "<li>" . $row['content'] . "</li>";
+  }
+  echo "</ol>";
+} catch (PDOException $e) {
+    print "Error!: " . $e->getMessage() . "<br/>";
+    die();
+}
+```
+
+Save and close the file when you are done editing it.
+
+Now, go to your browser to access the todo_list.php page using your domain name or public IP address configured for your website followed by /todo_list.php:
+
+**`http://<Ubuntu-Public-IP-Address>/todo_list.php`**
+
+You should see a page as shown on the screeshot below showing the content you have inserted in your todo_list table.
+
+![Todo_list](./images/todo_list.png)
+
+If it is showing correctly, it means the PHP environment is ready to connect and interact with the MySQL server.
+
+**NOTE!**
+ Make sure the version of the `php-fpm.sock` version referenced in the `etc/nginx/sites-available/lempproject` and `etc/nginx/sites-enabled/lempproject` files is the same as what is installed in the `/var/run/php/` folder.
+
+**This is the end of this project.**
