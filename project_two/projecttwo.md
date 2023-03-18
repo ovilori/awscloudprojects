@@ -97,3 +97,75 @@ Set up of the LAMP stack is complete with:
 - [x] PHP
 
 ## .............................. Step 4: Configuring Nginx to use PHP processor ..............................
+
+Purpose: to create server blocks that will encapsulate configuration details and host more than one domain on a single server. In this step, we will set up a domain called lempproject as an example.
+
+Create the root web directory for lempproject using the command below:
+
+**`sudo mkdir /var/www/lempproject`**
+
+Assign ownership of the directory with the $USER environment variable. This will reference your current system user:
+
+**`sudo chown -R $USER:$USER /var/www/lempproject`**
+
+Create and open a new configuration file in Nginx's sites-available directory using your preferred command-line editor:
+
+**`sudo vi etc/nginx/sites-available/lempproject`**
+
+Paste the following bare-bones configuration in the blank file and save:
+
+```
+#/etc/nginx/sites-available/lempproject
+server {
+    listen 80;
+    server_name lempproject www.lempproject;
+    root /var/www/lempproject;
+    index index.html index.htm index.php;
+    location / {
+        try_files $uri $uri/ =404;
+    }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+     }
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
+Activate your configuration by linking to the config file from Nginx’s sites-enabled directory using command below. This tells Nginx to use the configuration next time it is reloaded.
+
+**`sudo ln -s /etc/nginx/sites-available/lempproject /etc/nginx/sites-enabled/`**
+
+Test configuration for syntax error with:
+
+**`sudo nginx -t`**
+
+You should see what's on the screenshot below. If any errors are reported, go back to your configuration file to review its contents before continuing.
+
+![Syntax check](./images/syntax_check.png)
+
+Run command below to disable the default Nginx host that is currently configured to listen on port 80.
+
+**`sudo unlink /etc/nginx/sites-enabled/default`**
+
+Reload Nginx to apply the changes made:
+
+**`sudo systemctl reload nginx`**
+
+Create an index.html file in the root web directory - /var/www/lempproject to test the new server block is working as expected:
+
+```
+sudo echo 'Hello LEMP from hostname' $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) 'with public IP' $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) > /var/www/lempproject/index.html
+```
+Now go to your browser and try to open the website URL using IP address:
+
+**`http://<Ubuntu-Public-IP-Address>:80`**
+
+![Browser test](./images/broswer_test.png)
+
+You can leave this file in place as a temporary landing page for your application until you set up an index.php file to replace it. Once you do that, remember to remove or rename the index.html file from your document root, as it would take precedence over an index.php file by default.
+
+The LEMP stack is now fully configured.
+
+## .............................. Step 5: Testing PHP with Nginx ..............................
