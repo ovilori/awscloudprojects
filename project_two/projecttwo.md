@@ -110,7 +110,7 @@ Assign ownership of the directory with the $USER environment variable. This will
 
 Create and open a new configuration file in Nginx's sites-available directory using your preferred command-line editor:
 
-**`sudo vi etc/nginx/sites-available/lempproject`**
+**`sudo vi /etc/nginx/sites-available/lempproject`**
 
 Paste the following bare-bones configuration in the blank file and save:
 
@@ -126,7 +126,7 @@ server {
     }
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
      }
     location ~ /\.ht {
         deny all;
@@ -169,3 +169,28 @@ You can leave this file in place as a temporary landing page for your applicatio
 The LEMP stack is now fully configured.
 
 ## .............................. Step 5: Testing PHP with Nginx ..............................
+
+Purpose: to create a PHP script to test that Nginx is able to handle .php files in our configured website.
+
+Create a test PHP file file in the root web directory - /var/www/lempproject:
+
+**`sudo vi /var/www/lempproject/info.php`**
+
+Paste the following lines into the new file. This is a valid PHP code that will return information about your server.
+
+```
+<?php
+phpinfo();
+```
+
+Access the page again on your browser using:
+
+**`http://<Ubuntu-Public-IP-Address>/info.php`**
+
+![Result](./images/browser_infophp_test.png)
+
+The file contains sensitive information about your PHP environment -and your Ubuntu server, so it is advisable to remove it since you can always recreate this page if you need to access the information again later.. You can use the rm command to do so:
+
+**`sudo rm /var/www/lempproject/info.php`**
+
+## .............................. Step 6: Retrieving data from MySQL database with PHP ..............................
