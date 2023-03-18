@@ -63,7 +63,7 @@ You can confirm you are now in that directory using the pwd command:
 
 **`pwd`**
 
-![Working_dir](.images/pwd.png)
+![Working_dir](./images/pwd.png)
 
 Now, we need to initialise our project so that a new file named package.json will be created. This file will normally contain information about our application and the dependencies that it needs to run. Start by running the npm init command to initialise the project and follow the prompts after running the command. Use Enter to accept the default values, then accept to write out the package.json file by typing yes.
 
@@ -140,7 +140,7 @@ If everything is OK, you should see ```Server running on port 5000``` in your te
 
 ## **Next, we need to open this port in the EC2 Security Groups. We will add a custom inbound rule to open port 5000:**
 
-![SecurityGroup](./images/inboudrule.png)
+![SecurityGroup](./images/inboundrule.png)
 
 Open up your browser and try to access your Ubuntu server’s Public IP or Public DNS name followed by port 5000:
 
