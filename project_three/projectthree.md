@@ -22,26 +22,26 @@ Create and launch an Ubuntu EC2 instance (check videos below on how to set up yo
 
 Purpose: to prepare our server, install nodejs, npm and initialise our project.
 
-## **Update and upgrade your Ubuntu instance:**
+Update and upgrade your Ubuntu instance:
 
 **`sudo apt update`**
 **`sudo apt upgrade`**
 
-## **Get the location of Node.js software from Ubuntu repositories:**
+Get the location of Node.js software from Ubuntu repositories:
 
 **`curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -`**
 
-## **Install Node.js on the Ubuntu server:**
+Install Node.js on the Ubuntu server:
 
 **`sudo apt-get install -y nodejs`**
 
 The command above installs both nodejs and npm. NPM is a package manager for Node like apt for Ubuntu, it is used to install Node modules & packages and to manage dependency conflicts.
 
-## **Verify the node installation with the command below:**
+Verify the node installation with the command below:
 
 **`node -v`**
 
-## **Verify the npm installation with the command below:**
+Verify the npm installation with the command below:
 
 **`npm -v`**
 
@@ -77,6 +77,116 @@ Run the command ls to confirm that you have package.json file created.
 
 ![package_json](./images/packagejson.png)
 
-## .............................. Step 2: Install Expressjs ..............................
+## **Install Expressjs**
 
 Purpose: to Install ExpressJs and create the Routes directory.
+
+Express is a framework for Node.js that simplifies development, and abstracts a lot of low level details. For example, Express helps to define routes of your application based on HTTP methods and URLs.
+
+To use express, install it using npm:
+
+**`npm install express`**
+
+Create a index.js file in the to-do directory with the command below:
+
+**`touch index.js`**
+
+Confirm that the index.js file is successfully created using the ls command.
+
+**`ls`**
+
+![lsoutput](./images/lsoutput.png)
+
+Install the dotenc module:
+
+**`npm install dotenv`**
+
+Open the index.js file:
+
+**`vim index.js`**
+
+Type the code below into it and save
+
+```
+const express = require('express');
+require('dotenv').config();
+
+const app = express();
+
+const port = process.env.PORT || 5000;
+
+app.use((req, res, next) => {
+res.header("Access-Control-Allow-Origin", "\*");
+res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+next();
+});
+
+app.use((req, res, next) => {
+res.send('Welcome to Express');
+});
+
+app.listen(port, () => {
+console.log(`Server running on port ${port}`)
+});
+```
+
+Now, we will start the server to see if it works. Open the terminal in the to-do list directory where your index.js file is, and type:
+
+**`node index.js`**
+
+If everything is OK, you should see ```Server running on port 5000``` in your terminal as shown below. Remember we specified to use port 5000 in the index.js file we created.
+
+![Output](./images/nodeoutput.png)
+
+## **Next, we need to open this port in the EC2 Security Groups. We will add a custom inbound rule to open port 5000:**
+
+![SecurityGroup](./images/inboudrule.png)
+
+Open up your browser and try to access your Ubuntu server’s Public IP or Public DNS name followed by port 5000:
+
+**`http://<Ubuntu-Public-IP-Address>:5000`**
+
+![Output](./images/expressonbrowser.png)
+
+## **Defining Routes for our App**
+
+The to-do application must perform three actions: Create a new task, Display list of all tasks, Delete a completed task. Each task will be associated with some particular endpoint and will use different standard HTTP request methods: POST, GET, DELETE. Therefore, we need to create routes that will define various endpoints that the to-do app will depend on.
+
+Create a new folder named routes:
+
+**`mkdir routes`**
+
+Change directory to routes folder:
+
+**`cd routes`**
+
+Now, create a file api.js with the command below:
+
+**`touch api.js`**
+
+Open the file with the command below:
+
+**`vim api.js`**
+
+Copy below code in the file and save it.
+
+```
+const express = require ('express');
+const router = express.Router();
+
+router.get('/todos', (req, res, next) => {
+
+});
+
+router.post('/todos', (req, res, next) => {
+
+});
+
+router.delete('/todos/:id', (req, res, next) => {
+
+})
+
+module.exports = router;
+```
+
+## **Creating Models**
