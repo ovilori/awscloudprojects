@@ -394,3 +394,152 @@ With this, we have confirmed that our backend part of our application is working
 
 ## .............................. Step 3: Frontend creation ..............................
 
+Purpose: to create a user interface for a web client (browser) to interact with the application via API.
+
+To start withm we will use the create-react-app command to scaffold our app. In the same root directory as your backend code (the to-do directory), run:
+
+**` npx create-react-app client`**
+
+This will create a new folder in your Todo directory called client, where you will add all the react code.
+
+![client_dir](./images/showclientfolder.png)
+
+## **Running a React App**
+
+We need to install some dependencies before testing the react app.
+
+Install concurrently - this is used to run more than one command simultaneously from the same terminal window.
+
+**`npm install concurrently --save-dev`**
+
+Install nodemon - it is used to run and monitor the server. If there is any changes in the server code, nodemon will restart it automatically and load the new changes.
+
+**`npm install nodemon --save-dev`**
+
+In the to-do folder, open the package.json file. Replace this part of the code:
+```
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+},
+```
+With this code below:
+```
+"scripts": {
+"start": "node index.js",
+"start-watch": "nodemon index.js",
+"dev": "concurrently \"npm run start-watch\" \"cd client && npm start\""
+},
+```
+
+## **Configure Proxy in package.json**
+
+Change directory to 'client' folder with **`cd client`**
+
+Open the package.json file with **`vi package.json`**
+
+Add the key value pair in the package.json file "proxy": "http://localhost:5000".
+
+The purpose of adding the proxy configuration in number 3 above is to make it possible to access the application directly from the browser by simply calling the server url like http://localhost:5000 rather than always including the entire path like http://localhost:5000/api/todos
+
+![packagejson](./images/package_json.png)
+
+Inside the to-do directory, run the command below:
+
+**`npm run dev`**
+
+The app should open and start running on localhost:3000
+
+![output](./images/rundev.png)
+
+In order to be able to access the application from the Internet we have to open TCP port 3000 on EC2 by adding a new inbound rule to the Security Group.
+
+![securitygrp](./images/securitygrp.png)
+
+## **Creating the React Components**
+
+For our to-do application, there will be two stateful components and one stateless component. 
+
+From the to-do directory, change to thr src directory:
+
+**`cd client/src`**
+
+Inside your src folder create another folder called components:
+
+**`mkdir components`**
+
+Move into the components directory with
+
+**`cd components`**
+
+Inside the components directory, create three files Input.js, ListTodo.js and Todo.js.
+
+**`touch Input.js ListTodo.js Todo.js`**
+
+![listfiles](./images/list.png)
+
+Open Input.js file
+
+**`vi Input.js`**
+
+Copy and past the following lines of codes in it. Save the file
+
+```
+import React, { Component } from 'react';
+import axios from 'axios';
+
+class Input extends Component {
+
+state = {
+action: ""
+}
+
+addTodo = () => {
+const task = {action: this.state.action}
+
+    if(task.action && task.action.length > 0){
+      axios.post('/api/todos', task)
+        .then(res => {
+          if(res.data){
+            this.props.getTodos();
+            this.setState({action: ""})
+          }
+        })
+        .catch(err => console.log(err))
+    }else {
+      console.log('input field required')
+    }
+
+}
+
+handleChange = (e) => {
+this.setState({
+action: e.target.value
+})
+}
+
+render() {
+let { action } = this.state;
+return (
+<div>
+<input type="text" onChange={this.handleChange} value={action} />
+<button onClick={this.addTodo}>add todo</button>
+</div>
+)
+}
+}
+
+export default Input
+```
+
+To make use of [Axios](https://github.com/axios/axios), which is a promise based HTTP client for the browser and node.js, cd into the to-do/client folder:
+
+**`cd ../.. `**
+
+Confirm you are in the clients folder with **`pwd`**
+
+![pwd](./images/pwd_.png)
+
+Install axios with **`npm install axios`** or **`yarn add axios`**
+
+
+
