@@ -79,8 +79,6 @@ Run the command ls to confirm that you have package.json file created.
 
 ## **Install Expressjs**
 
-Purpose: to Install ExpressJs and create the Routes directory.
-
 Express is a framework for Node.js that simplifies development, and abstracts a lot of low level details. For example, Express helps to define routes of your application based on HTTP methods and URLs.
 
 To use express, install it using npm:
@@ -271,3 +269,128 @@ module.exports = router;
 ```
 
 ## **MongoDB Database**
+
+We need a database where we will store our data. For this we will make use of mLab. mLab provides MongoDB database as a service solution (DBaaS). 
+
+Sign up [here](https://www.mongodb.com/atlas-signup-from-mlab) for a shared clusters free account. Follow the sign up process, select AWS as the cloud provider, and choose a region close to you.
+
+[Dashboard](./images/atlasdashboard.png)
+
+Allow access to the MongoDB database from anywhere (Not secure, but it is ideal for testing)
+
+Click on Network Access and then on the EDIT button. On the next screen, select ALLOW ACCESS FROM ANYWHERE.
+
+![NetworkAccess](./images/networkaccess.png)
+
+Create a MongoDB database and collection inside mLab.
+
+![DatabaseCreation](./images/dbcreation.png) 
+
+In the index.js file, we specified process.env to access environment variables. Create a file in the todo directory and name it .env.
+
+**`touch .env`**
+**`vi .env`**
+
+Add the connection string to access the database in it, just as below. Update <username>, <password>, <network-address> and <database> according to your setup.
+
+```
+DB = 'mongodb+srv://<username>:<password>@<network-address>/<dbname>?retryWrites=true&w=majority'
+```
+Here is how to get your connection string:
+
+![Connection1](./images/connection_1.png)
+
+![Connection2](./images/connection_2.png)
+
+![Connection3](./images/connection_3.png)
+
+Update the index.js file to reflect the user of .env so that node.js can connect to the database. Open the file with **`vim index.js`**, delete the entire content with :%d, copy and past the entire code below into it. Save the file.
+
+```
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const routes = require('./routes/api');
+const path = require('path');
+require('dotenv').config();
+
+const app = express();
+
+const port = process.env.PORT || 5000;
+
+//connect to the database
+mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true })
+.then(() => console.log(`Database connected successfully`))
+.catch(err => console.log(err));
+
+//since mongoose promise is depreciated, we overide it with node's promise
+mongoose.Promise = global.Promise;
+
+app.use((req, res, next) => {
+res.header("Access-Control-Allow-Origin", "\*");
+res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+next();
+});
+
+app.use(bodyParser.json());
+
+app.use('/api', routes);
+
+app.use((err, req, res, next) => {
+console.log(err);
+next();
+});
+
+app.listen(port, () => {
+console.log(`Server running on port ${port}`)
+});
+```
+
+Using environment variables to store information is considered more secure and best practice to separate configuration and secret data from the application, instead of writing connection strings directly inside the index.js application file.
+
+Start the server using the command below:
+
+**`node index.js`**
+
+![output](./images/testserver.png)
+
+The backend configuration is complete, and we will now test the server.
+
+## **Testing Backend Code without Frontend using RESTful API**
+
+Since we don't have frontend User Interface (UI) yet, we will use an API development client (Postman) to test our code. If you don't have postman on your PC, click [Install Postman](https://www.getpostman.com/downloads/). 
+
+We will test all the API endpoints and make sure they are working. For the endpoints that require body, you should send JSON back with the necessary fields since it’s what we setup in our code.
+
+Create a POST request to the API http://<PublicIP-or-PublicDNS>:5000/api/todos. This request sends a new task to our To-Do list so the application could store it in the database.
+
+Note: make sure your set header key Content-Type as application/json
+
+![createrequest](./images/create_1.png)
+
+Add a body to the request and send:
+
+![createrequest2](./images/postrequest.png)
+
+![createrequest3](./images/postrequest2.png)
+
+We can also check our database to see how the requests are stored.
+
+![DBrecord](./images/dbrecord.png)
+
+Create a GET request to the API http://<PublicIP-or-PublicDNS>:5000/api/todos. This request retrieves all existing records from out To-do application (backend requests these records from the database and sends it us back as a response to GET request).
+
+![getRequest](./images/getrequest.png)
+
+Send a DELETE request to the API http://<PublicIP-or-PublicDNS>:5000/api/todos. This request deletes the record of the item specified in the request. You need to send the ID of the record as part of the DELETE request.
+
+![deleterecord](./images/deleterequest.png)
+
+With this, we have confirmed that our backend part of our application is working with the three operations we wanted (GET, POST & DELETE).
+
+- [x] Display a list of tasks – HTTP GET request
+- [x] Add a new task to the list – HTTP POST request
+- [x] Delete an existing task from the list – HTTP DELETE request
+
+## .............................. Step 3: Frontend creation ..............................
+
