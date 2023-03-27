@@ -324,3 +324,4 @@ Our Web Book Register Application will look like in browser:
 
 ![browser](./images/browser.png)
 
+**This is the end of this project.**
