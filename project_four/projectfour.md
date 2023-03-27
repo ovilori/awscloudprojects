@@ -176,3 +176,151 @@ var Book = mongoose.model('Book', bookSchema);
 module.exports = mongoose.model('Book', bookSchema);
 ```
 
+## .............................. Step 5: Access the routes with AngularJS ..............................
+
+[AngularJS](https://angularjs.org/) provides a web framework for creating dynamic views in your web applications. In this tutorial, we use AngularJS to connect our web page with Express and perform actions on our book register.
+
+Change directory back to the Books folder:
+
+**`cd ../..`**
+
+Create a folder named public and change directory into it:
+
+**`mkdir public && cd public`**
+
+Create a file named script.js, copy the code below into it and save the file:
+
+**`vi script.js`**
+
+Copy and paste the code below (controller configuration defined) into the script.js file:
+
+```
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $http) {
+  $http( {
+    method: 'GET',
+    url: '/book'
+  }).then(function successCallback(response) {
+    $scope.books = response.data;
+  }, function errorCallback(response) {
+    console.log('Error: ' + response);
+  });
+  $scope.del_book = function(book) {
+    $http( {
+      method: 'DELETE',
+      url: '/book/:isbn',
+      params: {'isbn': book.isbn}
+    }).then(function successCallback(response) {
+      console.log(response);
+    }, function errorCallback(response) {
+      console.log('Error: ' + response);
+    });
+  };
+  $scope.add_book = function() {
+    var body = '{ "name": "' + $scope.Name + 
+    '", "isbn": "' + $scope.Isbn +
+    '", "author": "' + $scope.Author + 
+    '", "pages": "' + $scope.Pages + '" }';
+    $http({
+      method: 'POST',
+      url: '/book',
+      data: body
+    }).then(function successCallback(response) {
+      console.log(response);
+    }, function errorCallback(response) {
+      console.log('Error: ' + response);
+    });
+  };
+});
+```
+
+In the public folder, create a file named index.html. Copy the HTML code below into it and save te file.
+
+**`vi index.html`**
+
+```
+<!doctype html>
+<html ng-app="myApp" ng-controller="myCtrl">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div>
+      <table>
+        <tr>
+          <td>Name:</td>
+          <td><input type="text" ng-model="Name"></td>
+        </tr>
+        <tr>
+          <td>Isbn:</td>
+          <td><input type="text" ng-model="Isbn"></td>
+        </tr>
+        <tr>
+          <td>Author:</td>
+          <td><input type="text" ng-model="Author"></td>
+        </tr>
+        <tr>
+          <td>Pages:</td>
+          <td><input type="number" ng-model="Pages"></td>
+        </tr>
+      </table>
+      <button ng-click="add_book()">Add</button>
+    </div>
+    <hr>
+    <div>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Isbn</th>
+          <th>Author</th>
+          <th>Pages</th>
+
+        </tr>
+        <tr ng-repeat="book in books">
+          <td>{{book.name}}</td>
+          <td>{{book.isbn}}</td>
+          <td>{{book.author}}</td>
+          <td>{{book.pages}}</td>
+
+          <td><input type="button" value="Delete" data-ng-click="del_book(book)"></td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
+```
+Change the directory back up to Books
+
+**`cd ..`**
+
+Start the server by running this command:
+
+**`node server.js`**
+
+![node-running](./images/noderunning.png)
+
+Once confirmed that the server is up and running, we can connect it via port 3300. Launch a separate Putty or SSH console to test what curl command returns locally.
+
+**`curl -s http://localhost:3300`**
+
+![curl-response](./images/curl-output.png)
+
+The output or response will be an HTML page which may be hard to read in the CLI. We will access it on the internet by first opening TCP port 3300 in the security group of our EC2 instance on AWS.
+
+## **Next, we need to open this port in the EC2 Security Groups. We will add a custom inbound rule to open port 3300:**
+
+![SecurityGroup](./images/inboundrule.png)
+
+Now you we can access our Book Register web application from the Internet with a browser using the Public IP address or Public DNS name of our AWS Ubuntu server.
+
+Quick reminder how to get your server’s Public IP and public DNS name:
+
+You can find it in your AWS web console in EC2 details:
+
+Run curl -s http://169.254.169.254/latest/meta-data/public-ipv4 for Public IP address or curl -s http://169.254.169.254/latest/meta-data/public-hostname for Public DNS name.
+
+Our Web Book Register Application will look like in browser:
+
+![browser](./images/browser.png)
+
