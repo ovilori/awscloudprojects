@@ -64,7 +64,7 @@ Install [npm](https://www.npmjs.com/) - Node package manager:
 
 We will be using the [body-parser](https://www.npmjs.com/package/body-parser) package to help us process JSON files passed in requests to the server. Install body-parser package:
 
-**`sudo npm install body-parse`*
+**`sudo npm install body-parse`**
 
 ![body-parser](./images/body-parser.png)
 
@@ -97,3 +97,82 @@ app.listen(app.get('port'), function() {
 });
 
 ```
+
+## .............................. Step 4: Install Express ..............................
+
+Express is a minimal and flexible Node.js web application framework that provides features for web and mobile applications. We will use Express to pass book information to and from our MongoDB database.
+
+We also will use [Mongoose](https://mongoosejs.com/) package which provides a straight-forward, schema-based solution to model your application data. We will use Mongoose to establish a schema for the database to store data of our book register.
+
+Install Express and Mongoose:
+
+**`sudo npm install express mongoose`**
+
+In the Books folder, create a folder named apps and change directory into it:
+
+**`mkdir apps && cd apps`**
+
+Create a file named routes.js, copy the code below into it and save the file:
+
+```
+var Book = require('./models/book');
+module.exports = function(app) {
+  app.get('/book', function(req, res) {
+    Book.find({}, function(err, result) {
+      if ( err ) throw err;
+      res.json(result);
+    });
+  }); 
+  app.post('/book', function(req, res) {
+    var book = new Book( {
+      name:req.body.name,
+      isbn:req.body.isbn,
+      author:req.body.author,
+      pages:req.body.pages
+    });
+    book.save(function(err, result) {
+      if ( err ) throw err;
+      res.json( {
+        message:"Successfully added book",
+        book:result
+      });
+    });
+  });
+  app.delete("/book/:isbn", function(req, res) {
+    Book.findOneAndRemove(req.query, function(err, result) {
+      if ( err ) throw err;
+      res.json( {
+        message: "Successfully deleted the book",
+        book: result
+      });
+    });
+  });
+  var path = require('path');
+  app.get('*', function(req, res) {
+    res.sendfile(path.join(__dirname + '/public', 'index.html'));
+  });
+};
+```
+
+In the apps folder, create a folder named models and change directory into it:
+
+**`mkdir models && cd models`**
+
+Create a file named book.js, copy the code below into it and save the file:
+
+```
+var mongoose = require('mongoose');
+var dbHost = 'mongodb://localhost:27017/test';
+mongoose.connect(dbHost);
+mongoose.connection;
+mongoose.set('debug', true);
+var bookSchema = mongoose.Schema( {
+  name: String,
+  isbn: {type: String, index: true},
+  author: String,
+  pages: Number
+});
+var Book = mongoose.model('Book', bookSchema);
+module.exports = mongoose.model('Book', bookSchema);
+```
+
